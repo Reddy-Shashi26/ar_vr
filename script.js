@@ -6,13 +6,13 @@ const context = canvas.getContext('2d');
 const cameraToggle = document.getElementById('cameraToggle');
 
 let currentStream; // To hold the current camera stream
-let isUsingBackCamera = true; // Track which camera is currently in use
+let isUsingBackCamera = true; // Start with the back camera
 
 async function startCamera() {
     try {
         const constraints = {
             video: {
-                facingMode: isUsingBackCamera ? { exact: "user" } : { exact: "environment" }, // Switch camera
+                facingMode: isUsingBackCamera ? { exact: "environment" } : { exact: "user" }, // Switch camera
                 width: { ideal: 320 }, // Lower width for better performance
                 height: { ideal: 240 }, // Lower height for better performance
                 autoFocus: true // Enable autofocus
@@ -63,4 +63,3 @@ cameraToggle.addEventListener('change', () => {
     isUsingBackCamera = !isUsingBackCamera; // Toggle camera state
     startCamera(); // Restart camera with new settings
 });
-
