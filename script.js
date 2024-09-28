@@ -1,45 +1,71 @@
 const videoElement = document.getElementById('videoElement');
-const canvasElement = document.getElementById('canvas');
-const canvas = canvasElement.getContext('2d');
+const canvas = document.getElementById('canvas');
 const overlayVideo = document.getElementById('overlayVideo');
-const scanElement = document.querySelector('.scan'); // Reference to the scanning animation element
+const qrPlaceholder = document.getElementById('qrPlaceholder');
+const context = canvas.getContext('2d');
+const cameraToggle = document.getElementById('cameraToggle');
 
-// Access the camera with back camera
-navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then(stream => {
-        videoElement.srcObject = stream;
-        videoElement.play();
-    })
-    .catch(err => {
-        console.error('Error accessing camera: ', err);
-    });
+let currentStream; // To hold the current camera stream
+let isUsingBackCamera = false; // Track which camera is currently in use
 
-// Function to check for QR code
-function tick() {
-    if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-        canvasElement.height = videoElement.videoHeight;
-        canvasElement.width = videoElement.videoWidth;
-        canvas.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+async function startCamera() {
+    try {
+        const constraints = {
+            video: {
+                facingMode: isUsingBackCamera ? { exact: "environment" } : { exact: "user" }, // Switch camera
+                width: { ideal: 640 }, // Reduce width for better performance
+                height: { ideal: 480 }, // Reduce height for better performance
+                autoFocus: true // Enable autofocus
+            }
+        };
 
-        const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-        const code = jsQR(imageData.data, canvasElement.width, canvasElement.height);
-
-        if (code) {
-            console.log('QR Code scanned: ', code.data);
-            overlayVideo.style.display = 'block'; // Show the video
-            overlayVideo.play(); // Play the video
-
-            // Stop the scanning animation
-            scanElement.style.animation = 'none'; // Stop the animation
-            scanElement.style.background = 'transparent'; // Optionally, hide the scan bar
-        } else {
-            // If no QR code is detected, restart the animation if needed
-            scanElement.style.animation = ''; // Restart the animation if desired
-            scanElement.style.background = 'linear-gradient(cyan, transparent)';
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop()); // Stop current stream
         }
+
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = currentStream; // Set the source of videoElement to the stream
+        videoElement.play(); // Play the video
+        requestAnimationFrame(tick); // Start processing frames
+    } catch (error) {
+        console.error("Error accessing camera: ", error);
+        alert("Could not access the camera. Please check permissions.");
     }
-    requestAnimationFrame(tick);
 }
 
-// Start the scanning loop
-requestAnimationFrame(tick);
+let frameCount = 0;
+const framesToSkip = 2; // Adjust this value based on performance needs
+
+function tick() {
+    if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+        if (frameCount % framesToSkip === 0) {
+            // Set canvas size to video size
+            canvas.height = videoElement.videoHeight;
+            canvas.width = videoElement.videoWidth;
+
+            // Draw video frame to canvas
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            // Get image data from canvas
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+            if (code) {
+                overlayVideo.style.display = "block"; // Show video overlay when QR is detected
+            } else {
+                overlayVideo.style.display = "none"; // Hide video overlay
+            }
+        }
+        frameCount++;
+    }
+    requestAnimationFrame(tick); // Keep processing frames
+}
+
+// Start the camera when the page loads
+window.onload = startCamera;
+
+// Toggle camera when the switch is changed
+cameraToggle.addEventListener('change', () => {
+    isUsingBackCamera = !isUsingBackCamera; // Toggle camera state
+    startCamera(); // Restart camera with new settings
+});
