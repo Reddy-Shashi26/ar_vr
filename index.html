@@ -3,24 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Video Overlay</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS -->
+    <title>QR Code Scanner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5; /* Light gray background */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: white; /* White background for the container */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            color: #333; /* Dark gray text */
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #666; /* Medium gray text */
+        }
+
+        .developer-info {
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9; /* Light background for the developer section */
+            padding: 20px;
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            margin-top: 20px; /* Space above developer info */
+        }
+
+        .developer-photo {
+            flex: 1;
+            text-align: center;
+        }
+
+        .developer-photo img {
+            border-radius: 50%; /* Circular photo */
+            width: 200px; /* Adjust size as needed */
+            height: 200px; /* Adjust size as needed */
+            border: 2px solid #007BFF; /* Blue border */
+        }
+
+        .developer-bio {
+            flex: 2;
+            padding-left: 20px;
+        }
+
+        .developer-bio h2 {
+            color: #007BFF; /* Blue color for the heading */
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 24px; /* Increased padding for the button */
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #007BFF; /* Blue background */
+            color: white; /* White text */
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+    </style>
 </head>
 <body>
-    <video id="videoElement" autoplay playsinline muted></video>
-    <canvas id="canvas"></canvas>
-    <video id="overlayVideo" autoplay loop muted>
-        <source src="your_video.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <div id="qrPlaceholder">Place QR Code Here</div>
-    
-    <label id="toggleSwitch">
-        <input type="checkbox" id="cameraToggle">
-        Switch Camera
-    </label>
+    <div class="container">
+        <header>
+            <h1>QR Code Scanner with AR</h1>
+            <p>Scan QR codes in real-time with enhanced features.</p>
+        </header>
 
-    <script src="jsQR.min.js"></script> <!-- Load jsQR locally -->
-    <script src="script.js"></script> <!-- Link to JS -->
+        <main>
+            <div class="developer-info">
+                <div class="developer-photo">
+                    <img src="developer.jpg" alt="Developer Photo"> <!-- Ensure this path is correct -->
+                </div>
+                <div class="developer-bio">
+                    <h2>About the Developer</h2>
+                    <p>Hi, I'm Shashi. I'm passionate about creating innovative solutions using technology. With a background in Arduino and IoT, I'm excited to bring this QR code scanning project to life.</p>
+                </div>
+            </div>
+<button id="launchButton" onclick="window.location.href='qr_scanner.html'">Launch Now</button>
+
+        </main>
+    </div>
 </body>
 </html>

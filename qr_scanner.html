@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Video Overlay</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS -->
+</head>
+<body>
+    <video id="videoElement" autoplay playsinline muted></video>
+    <canvas id="canvas"></canvas>
+    <video id="overlayVideo" autoplay loop muted>
+        <source src="your_video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div id="qrPlaceholder">Place QR Code Here</div>
+    
+    <label id="toggleSwitch">
+        <input type="checkbox" id="cameraToggle">
+        Switch Camera
+    </label>
+
+    <script src="jsQR.min.js"></script> <!-- Load jsQR locally -->
+    <script src="script.js"></script> <!-- Link to JS -->
+</body>
+</html>
