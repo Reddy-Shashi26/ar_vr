@@ -6,7 +6,7 @@ const context = canvas.getContext('2d');
 const cameraToggle = document.getElementById('cameraToggle');
 
 let currentStream; // To hold the current camera stream
-let isUsingBackCamera = false; // Track which camera is currently in use
+let isUsingBackCamera = true; // Track which camera is currently in use
 
 async function startCamera() {
     try {
