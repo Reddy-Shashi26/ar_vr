@@ -4,48 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Video Overlay</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            background-color: #000;
-        }
-        video, canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        #overlayVideo {
-            display: none; /* Initially hide the overlay video */
-            opacity: 0.5; /* Set the opacity for transparency */
-        }
-        #qrPlaceholder {
-            position: absolute;
-            bottom: 20px; /* Distance from the bottom */
-            left: 20px; /* Distance from the left */
-            width: 200px; /* Width of the placeholder */
-            height: 200px; /* Height of the placeholder */
-            border: 2px dashed #fff; /* Dashed border for the placeholder */
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff; /* Text color */
-            font-size: 16px; /* Font size */
-            text-align: center; /* Center the text */
-        }
-        #toggleSwitch {
-            margin: 20px;
-            color: #fff;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- Font Awesome -->
 </head>
 <body>
     <video id="videoElement" autoplay playsinline muted></video>
@@ -54,83 +14,17 @@
         <source src="your_video.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
-    <div id="qrPlaceholder">Place QR Code Here</div> <!-- Placeholder for QR code detection -->
     
-    <!-- Toggle Switch for Camera -->
-    <label id="toggleSwitch">
-        <input type="checkbox" id="cameraToggle">
-        Switch Camera
-    </label>
+    <div class="center">
+               <div class="square">
+            <div class="scan"></div>
+        </div>
+    </div>
 
-    <!-- Load jsQR library from jsdelivr CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    <script>
-        const videoElement = document.getElementById('videoElement');
-        const canvas = document.getElementById('canvas');
-        const overlayVideo = document.getElementById('overlayVideo');
-        const qrPlaceholder = document.getElementById('qrPlaceholder');
-        const context = canvas.getContext('2d');
-        const cameraToggle = document.getElementById('cameraToggle');
 
-        let currentStream; // To hold the current camera stream
-        let isUsingBackCamera = true; // Track which camera is currently in use
 
-        async function startCamera() {
-            try {
-                const constraints = {
-                    video: {
-                        facingMode: isUsingBackCamera ? { exact: "environment" } : { exact: "user" }, // Switch camera
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        autoFocus: true // Enable autofocus
-                    }
-                };
-                
-                // Get access to the device camera
-                if (currentStream) {
-                    currentStream.getTracks().forEach(track => track.stop()); // Stop current stream
-                }
-                
-                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-                videoElement.srcObject = currentStream; // Set the source of videoElement to the stream
-                videoElement.play(); // Play the video
-                requestAnimationFrame(tick); // Start processing frames
-            } catch (error) {
-                console.error("Error accessing camera: ", error);
-                alert("Could not access the camera. Please check permissions.");
-            }
-        }
+<script src="jsQR.min.js"></script> <!-- Use local jsQR file -->
+<script src="script.js"></script> <!-- Link to your JS file -->
 
-        function tick() {
-            if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-                // Set canvas size to video size
-                canvas.height = videoElement.videoHeight;
-                canvas.width = videoElement.videoWidth;
-
-                // Draw video frame to canvas
-                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-                // Get image data from canvas
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-                if (code) {
-                    overlayVideo.style.display = "block"; // Show video overlay when QR is detected
-                } else {
-                    overlayVideo.style.display = "none"; // Hide video overlay
-                }
-            }
-            requestAnimationFrame(tick); // Keep processing frames
-        }
-
-        // Start the camera when the page loads
-        window.onload = startCamera;
-
-        // Toggle camera when the switch is changed
-        cameraToggle.addEventListener('change', () => {
-            isUsingBackCamera = !isUsingBackCamera; // Toggle camera state
-            startCamera(); // Restart camera with new settings
-        });
-    </script>
 </body>
 </html>
