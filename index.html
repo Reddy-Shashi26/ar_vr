@@ -63,8 +63,18 @@
 
         async function startCamera() {
             try {
+                // Constraints for using the back camera and enabling autofocus
+                const constraints = {
+                    video: {
+                        facingMode: { exact: "environment" }, // Use the back camera
+                        width: { ideal: 1280 }, // Set desired width
+                        height: { ideal: 720 }, // Set desired height
+                        autoFocus: true // Enable autofocus
+                    }
+                };
+                
                 // Get access to the device camera
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 videoElement.srcObject = stream; // Set the source of videoElement to the stream
                 videoElement.play(); // Play the video
                 requestAnimationFrame(tick); // Start processing frames
@@ -101,3 +111,4 @@
     </script>
 </body>
 </html>
+
