@@ -24,24 +24,19 @@
         }
         #overlayVideo {
             display: none; /* Initially hide the overlay video */
-            opacity: 0.2; /* Set the opacity for transparency */
+            opacity: 0.8; /* Set the opacity for transparency */
         }
         #qrPlaceholder {
             position: absolute;
             top: 50%; /* Center vertically */
             left: 50%; /* Center horizontally */
-            width: 200px; /* Width of the placeholder */
-            height: 200px; /* Height of the placeholder */
-            border: 4px solid rgba(255, 255, 255, 0.8); /* Semi-transparent white border */
+            width: 250px; /* Width of the placeholder */
+            height: 250px; /* Height of the placeholder */
+            border: 4px dashed rgba(255, 255, 255, 0.8); /* Dashed semi-transparent white border */
             border-radius: 10px; /* Rounded corners */
             transform: translate(-50%, -50%); /* Center the placeholder */
             background-color: transparent; /* No background color */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff; /* Text color */
-            font-size: 16px; /* Font size */
-            text-align: center; /* Center the text */
+            pointer-events: none; /* Allow clicks to pass through */
         }
         #toggleSwitch {
             margin: 20px;
