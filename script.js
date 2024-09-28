@@ -12,9 +12,9 @@ async function startCamera() {
     try {
         const constraints = {
             video: {
-                facingMode: isUsingBackCamera ? { exact: "environment" } : { exact: "user" }, // Switch camera
-                width: { ideal: 640 }, // Reduce width for better performance
-                height: { ideal: 480 }, // Reduce height for better performance
+                facingMode: isUsingBackCamera ? { exact: "user" } : { exact: "environment" }, // Switch camera
+                width: { ideal: 320 }, // Lower width for better performance
+                height: { ideal: 240 }, // Lower height for better performance
                 autoFocus: true // Enable autofocus
             }
         };
@@ -33,30 +33,24 @@ async function startCamera() {
     }
 }
 
-let frameCount = 0;
-const framesToSkip = 2; // Adjust this value based on performance needs
-
 function tick() {
     if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-        if (frameCount % framesToSkip === 0) {
-            // Set canvas size to video size
-            canvas.height = videoElement.videoHeight;
-            canvas.width = videoElement.videoWidth;
+        // Set canvas size to video size
+        canvas.height = videoElement.videoHeight;
+        canvas.width = videoElement.videoWidth;
 
-            // Draw video frame to canvas
-            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        // Draw video frame to canvas
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-            // Get image data from canvas
-            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, canvas.width, canvas.height);
+        // Get image data from canvas
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, canvas.width, canvas.height);
 
-            if (code) {
-                overlayVideo.style.display = "block"; // Show video overlay when QR is detected
-            } else {
-                overlayVideo.style.display = "none"; // Hide video overlay
-            }
+        if (code) {
+            overlayVideo.style.display = "block"; // Show video overlay when QR is detected
+        } else {
+            overlayVideo.style.display = "none"; // Hide video overlay
         }
-        frameCount++;
     }
     requestAnimationFrame(tick); // Keep processing frames
 }
@@ -69,3 +63,4 @@ cameraToggle.addEventListener('change', () => {
     isUsingBackCamera = !isUsingBackCamera; // Toggle camera state
     startCamera(); // Restart camera with new settings
 });
+
