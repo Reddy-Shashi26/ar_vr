@@ -54,7 +54,7 @@ function tick() {
     }
     requestAnimationFrame(tick); // Keep processing frames
 }
-
+//shashi
 // Start the camera when the page loads
 window.onload = startCamera;
 
