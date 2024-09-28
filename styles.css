@@ -17,7 +17,7 @@ video, canvas {
 }
 #overlayVideo {
     display: none; /* Initially hide the overlay video */
-    opacity: 0.5; /* Set the opacity for transparency */
+    opacity: 0.8; /* Set the opacity for transparency */
 }
 #qrPlaceholder {
     position: absolute;
