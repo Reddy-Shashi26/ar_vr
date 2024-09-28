@@ -8,7 +8,7 @@
         body {
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
             overflow: hidden;
@@ -41,6 +41,10 @@
             font-size: 16px; /* Font size */
             text-align: center; /* Center the text */
         }
+        #toggleSwitch {
+            margin: 20px;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -51,6 +55,12 @@
         Your browser does not support the video tag.
     </video>
     <div id="qrPlaceholder">Place QR Code Here</div> <!-- Placeholder for QR code detection -->
+    
+    <!-- Toggle Switch for Camera -->
+    <label id="toggleSwitch">
+        <input type="checkbox" id="cameraToggle">
+        Switch Camera
+    </label>
 
     <!-- Load jsQR library from jsdelivr CDN -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -60,22 +70,29 @@
         const overlayVideo = document.getElementById('overlayVideo');
         const qrPlaceholder = document.getElementById('qrPlaceholder');
         const context = canvas.getContext('2d');
+        const cameraToggle = document.getElementById('cameraToggle');
+
+        let currentStream; // To hold the current camera stream
+        let isUsingBackCamera = true; // Track which camera is currently in use
 
         async function startCamera() {
             try {
-                // Constraints for using the back camera and enabling autofocus
                 const constraints = {
                     video: {
-                        facingMode: { exact: "environment" }, // Use the back camera
-                        width: { ideal: 1280 }, // Set desired width
-                        height: { ideal: 720 }, // Set desired height
+                        facingMode: isUsingBackCamera ? { exact: "environment" } : { exact: "user" }, // Switch camera
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
                         autoFocus: true // Enable autofocus
                     }
                 };
                 
                 // Get access to the device camera
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                videoElement.srcObject = stream; // Set the source of videoElement to the stream
+                if (currentStream) {
+                    currentStream.getTracks().forEach(track => track.stop()); // Stop current stream
+                }
+                
+                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoElement.srcObject = currentStream; // Set the source of videoElement to the stream
                 videoElement.play(); // Play the video
                 requestAnimationFrame(tick); // Start processing frames
             } catch (error) {
@@ -108,7 +125,12 @@
 
         // Start the camera when the page loads
         window.onload = startCamera;
+
+        // Toggle camera when the switch is changed
+        cameraToggle.addEventListener('change', () => {
+            isUsingBackCamera = !isUsingBackCamera; // Toggle camera state
+            startCamera(); // Restart camera with new settings
+        });
     </script>
 </body>
 </html>
-
